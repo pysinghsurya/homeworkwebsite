@@ -18,8 +18,8 @@ password = ""
 name = ""
 
 app = Flask(__name__)
-my_email = "professionaldevelopersurya@gmail.com"
-my_password = "keqn vtlu mvdq qiej"
+my_email = "livingforpython@gmail.com"
+my_password = "jguo tbkp czxf fnqu"
 year = datetime.now().year
 os.environ["FLASK_KEY"] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 app.config['SECRET_KEY'] = os.environ.get("FLASK_KEY")
