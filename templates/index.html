@@ -78,8 +78,8 @@
             {% if not request.args.get('date_filter') or request.args.get('date_filter') == image['date'] %}
                 <li class="image-item">  <div class="image-container">
                         
-                            <h6 style="color:white;padding:10px">{{ image.date }}</h6>
-			    <h6 style="color:white;padding:10px">{{ image.subject }}</h6>
+                            <h6 style="color:white;padding:20px">{{ image.date }}</h6>
+			    <h6 style="color:white;padding:20px">{{ image.subject }}</h6>
                         
                             <img src="{{ url_for('serve_image', id=image.id) }}" alt="Uploaded Image" id="img1">
                         
