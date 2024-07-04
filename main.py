@@ -23,7 +23,7 @@ my_password = "zpgp gdtv bdvg nkgi"
 year = datetime.now().year
 os.environ["FLASK_KEY"] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 app.config['SECRET_KEY'] = os.environ.get("FLASK_KEY")
-app.config['UPLOAD_FOLDER'] = 'uploads/'
+
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 app.config["ALLOWED_EXTENSIONS"] = [".jpg", ".jpeg", ".docx"]
 
