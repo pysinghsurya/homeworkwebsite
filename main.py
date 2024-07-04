@@ -193,7 +193,7 @@ def upload_file():
 
                 img = Img(
                       img=pic.read(), 
-               .      name=filename, 
+                      name=filename, 
                       mimetype=mimetype
                 )
                 db.session.add(img)
