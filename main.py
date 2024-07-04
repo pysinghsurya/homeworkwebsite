@@ -150,23 +150,8 @@ def logout():
 
 @app.route("/")
 def homepage():
-    files = os.listdir(app.config["UPLOAD_FOLDER"])
-    images = []
-    unique_dates = set()  # Track unique upload dates for dropdown
-
-    files.sort(key=lambda f: path.getmtime(path.join(app.config["UPLOAD_FOLDER"], f)), reverse=True)
-    for file in files:
-        extension = os.path.splitext(file)[1].lower()
-        if extension in app.config["ALLOWED_EXTENSIONS"]:
-            ti_m = os.path.getmtime(f'{app.config["UPLOAD_FOLDER"]}/{file}')
-            upload_date = datetime.fromtimestamp(ti_m).strftime('%d-%m-%Y')  # Format date for display
-            unique_dates.add(upload_date)  # Add unique date to set
-        
-            images.append({'filename': f"{file}", 'date': upload_date})
-
-   
-    date_options = sorted(list(unique_dates))
-
+    image = db.session.execute(db.select(Img))
+    images = image.scalar()
     return render_template("index.html", current_year=year, images=images, date_options=date_options)
 
 
@@ -183,11 +168,7 @@ def upload_file():
 
                 if extension not in app.config["ALLOWED_EXTENSIONS"]:
                     return redirect("/file-extension-unsupported")
-                file.save(os.path.join(
-                    app.config["UPLOAD_FOLDER"],
-                    secure_filename(file.filename)
-
-                ))
+                
                 mimetype = file.mimetype
       
 
