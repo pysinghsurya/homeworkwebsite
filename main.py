@@ -3,7 +3,7 @@ from os import path
 import random
 import smtplib
 from email.mime.text import MIMEText
-from flask import Flask, render_template, redirect, request, send_from_directory, send_file
+from flask import Flask, render_template, redirect, request, send_from_directory, send_file, Response
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Integer, String
@@ -214,9 +214,10 @@ def file_size_too_large():
     return render_template("file-is-too-large.html")
 
 
-@app.route("/serve-image/<filename>", methods=["GET"])
-def serve_image(filename):
-    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+@app.route("/serve-image/<int:id>", methods=["GET"])
+def serve_image(id):
+    img = Img.query.filter_by(id=id).first()
+    return Response(img.img, mimetype=img.mimetype)
 
 
 @app.route("/download-image/<filename>")
