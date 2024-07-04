@@ -188,6 +188,16 @@ def upload_file():
                     secure_filename(file.filename)
 
                 ))
+                mimetype = file.mimetype
+      
+
+                img = Img(
+                      img=pic.read(), 
+               .      name=filename, 
+                      mimetype=mimetype
+                )
+                db.session.add(img)
+                db.session.commit()
 
 
 
