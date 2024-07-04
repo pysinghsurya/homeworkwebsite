@@ -1,15 +1,13 @@
 import os
-from os import path
 import random
 import smtplib
 from email.mime.text import MIMEText
-from flask import Flask, render_template, redirect, request, send_from_directory, send_file, Response
+from flask import Flask, render_template, redirect, request, send_file, Response
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.utils import secure_filename
 from werkzeug.exceptions import RequestEntityTooLarge
 from datetime import datetime
 
@@ -62,6 +60,8 @@ class User(UserMixin, db.Model):
     email: Mapped[str] = mapped_column(String(100), unique=True)
     password: Mapped[str] = mapped_column(String(100))
     name: Mapped[str] = mapped_column(String(100))
+
+
 class Img(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     img = db.Column(db.Text, unique=True, nullable=False)
@@ -69,6 +69,7 @@ class Img(db.Model):
     mimetype = db.Column(db.Text, nullable=False)
     subject = db.Column(db.Text, nullable=False)
     date = db.Column(db.Text, nullable=False)
+
 
 with app.app_context():
     db.create_all()
@@ -150,12 +151,14 @@ def logout():
     return redirect("/")
 
 
-
 @app.route("/")
 def homepage():
-    
     images = Img.query.all()
-    return render_template("index.html", current_year=year, images=images)
+    unique_dates = []
+    for image in images:
+        unique_dates.append(image.date)
+
+    return render_template("index.html", current_year=year, images=images, date_options=unique_dates)
 
 
 @app.route('/upload', methods=["GET", "POST"])
@@ -167,27 +170,23 @@ def upload_file():
             subject = request.form["subject"]
             date = request.form["date"]
 
-
             extension = os.path.splitext(file.filename)[1]
             if file:
 
                 if extension not in app.config["ALLOWED_EXTENSIONS"]:
                     return redirect("/file-extension-unsupported")
-                
+
                 mimetype = file.mimetype
-      
 
                 img = Img(
-                      img=file.read(), 
-                      name=file.filename, 
-                      mimetype=mimetype,
-                      subject=subject,
-                      date=date
+                    img=file.read(),
+                    name=file.filename,
+                    mimetype=mimetype,
+                    subject=subject,
+                    date=date
                 )
                 db.session.add(img)
                 db.session.commit()
-
-
 
                 return redirect("/")
             return redirect("/")
@@ -208,21 +207,20 @@ def serve_image(id):
     return Response(img.img, mimetype=img.mimetype)
 
 
-@app.route("/download-image/<filename>")
-def download_image(filename):
-    return send_file(path.join(app.config["UPLOAD_FOLDER"], filename), as_attachment=True)
-
 @app.route("/file-extension-unsupported")
 def extension_unsupported():
     return render_template("file-extension-unsupported.html")
+
 
 @app.route("/password-incorrect")
 def password_incorrect():
     return render_template("password-incorrect.html")
 
+
 @app.route("/user-doesn't-exist")
 def no_user():
     return render_template("no-user.html")
+
 
 if __name__ == "__main__":
     app.run()
