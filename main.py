@@ -152,7 +152,7 @@ def logout():
 def homepage():
     image = db.session.execute(db.select(Img))
     images = image.scalar()
-    return render_template("index.html", current_year=year, images=images, date_options=date_options)
+    return render_template("index.html", current_year=year, images=images)
 
 
 @app.route('/upload', methods=["GET", "POST"])
