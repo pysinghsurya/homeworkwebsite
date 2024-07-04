@@ -67,6 +67,8 @@ class Img(db.Model):
     img = db.Column(db.Text, unique=True, nullable=False)
     name = db.Column(db.Text, nullable=False)
     mimetype = db.Column(db.Text, nullable=False)
+    subject = db.Column(db.Text, nullable=False)
+    date = db.Column(db.Text, nullable=False)
 
 with app.app_context():
     db.create_all()
@@ -162,6 +164,8 @@ def upload_file():
         try:
             # Access uploaded file
             file = request.files['file']
+            subject = request.form["subject"]
+            date = request.form["date"]
 
 
             extension = os.path.splitext(file.filename)[1]
@@ -176,7 +180,9 @@ def upload_file():
                 img = Img(
                       img=file.read(), 
                       name=file.filename, 
-                      mimetype=mimetype
+                      mimetype=mimetype,
+                      subject=subject,
+                      date=date
                 )
                 db.session.add(img)
                 db.session.commit()
