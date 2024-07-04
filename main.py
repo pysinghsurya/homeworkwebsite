@@ -150,8 +150,8 @@ def logout():
 
 @app.route("/")
 def homepage():
-    image = db.session.execute(db.select(Img))
-    images = image.scalar()
+    
+    images = Img.query.all()
     return render_template("index.html", current_year=year, images=images)
 
 
