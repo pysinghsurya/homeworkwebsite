@@ -87,10 +87,10 @@
 <ul class="image-grid">  {% for image in images %}
             {% if not request.args.get('date_filter') or request.args.get('date_filter') == image['date'] %}
                 <li class="image-item">  <div class="image-container">
-                        <h6 style="color:white;padding-left:45px;padding-right:30px;padding-top:30px">{{ image['date'] }}</h6>
+                        
 
                         <a href="{{ url_for('download_image', filename=image['filename']) }}">
-                            <img src="{{ url_for('serve_image', filename=image['filename']) }}" alt="Uploaded Image" id="img1">
+                            <img src="{{ url_for('serve_image', id=image.id) }}" alt="Uploaded Image" id="img1">
                         </a>
                     </div>
                 </li>
