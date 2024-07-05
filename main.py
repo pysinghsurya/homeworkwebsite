@@ -2,7 +2,7 @@ import os
 import random
 import smtplib
 from email.mime.text import MIMEText
-from flask import Flask, render_template, redirect, request, send_file, Response
+from flask import Flask, render_template, redirect, request, Response
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Integer, String
