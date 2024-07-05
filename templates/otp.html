@@ -5,6 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
   <link rel="stylesheet" href="static/css/styles.css">
+  <style>
+    #popup {
+      position: fixed;
+      top: 70px;
+      right: 10px;
+      padding: 20px;
+      background-color: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      z-index: 999; /* Ensure it's on top */
+      display: none; /* Initially hidden */
+    }
+  </style>
 </head>
 <body>
   <div class="wrapper">
@@ -22,5 +36,19 @@
         </div>
     </form>
   </div>
+{% if invalid_otp %}
+<div id="popup">Invalid OTP entered.</div>
+<script>
+  const popup = document.getElementById('popup');
+
+  // Show the popup
+  popup.style.display = 'block';
+
+  // Hide the popup after 5 seconds (5000 milliseconds)
+  setTimeout(function() {
+    popup.style.display = 'none';
+  }, 5000);
+</script>
+{% endif %}
 </body>
 </html>

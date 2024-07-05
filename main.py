@@ -14,7 +14,12 @@ from datetime import datetime
 email = ""
 password = ""
 name = ""
-
+file_too_large = False
+invalid_extension = False
+password_incorrect = False
+user_not_exist = False
+user_already_exist = False
+invalid_otp = False
 app = Flask(__name__)
 my_email = "pythonersurya@gmail.com"
 my_password = "zpgp gdtv bdvg nkgi"
@@ -77,6 +82,7 @@ with app.app_context():
 
 @app.route("/register", methods=["POST", "GET"])
 def hipage():
+    global user_already_exist
     if request.method == "POST":
         global email
         email = request.form["email"]
@@ -84,25 +90,26 @@ def hipage():
         password = request.form["password"]
         global name
         name = request.form["name"]
+        result = db.session.execute(db.select(User).where(User.email == email))
+        user = result.scalar()
+        if user:
+            user_already_exist = True
+            return
         with smtplib.SMTP("smtp.gmail.com", 587) as connection:
             connection.starttls()
             connection.login(my_email, my_password)
             connection.sendmail(my_email, email, message.as_string())
         return redirect("/create-account")
-    return render_template("register.html", current_user=current_user)
+    return render_template("register.html", current_user=current_user,user_exists=user_already_exist)
 
 
 @app.route("/create-account", methods=["POST", "GET"])
 def create_user():
+    global invalid_otp
     if request.method == "POST":
 
         entered_otp = request.form["otp"]
         if int(six_digit_string) == int(entered_otp):
-            result = db.session.execute(db.select(User).where(User.email == email))
-            user = result.scalar()
-            if user:
-                return redirect("/login")
-
             hash_and_salted_password = generate_password_hash(
                 password,
                 method='pbkdf2:sha256',
@@ -119,29 +126,33 @@ def create_user():
             login_user(new_user)
 
             return redirect("/")
+        if int(six_digit_string) != int(entered_otp):
+            invalid_otp = True
+            return
 
-    return render_template("otp.html", current_user=current_user)
+    return render_template("otp.html", current_user=current_user,invalid_otp=invalid_otp)
 
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
+    global password_incorrect, user_not_exist
     if request.method == "POST":
         password = request.form["password"]
         email = request.form["email"]
         result = db.session.execute(db.select(User).where(User.email == email))
-        # Note, email in db is unique so will only have one result.
+
         user = result.scalar()
-        # Email doesn't exist
+
         if not user:
-            return redirect("/user-doesn't-exist")
-        # Password incorrect
+            user_not_exist = True
+
         elif not check_password_hash(user.password, password):
-            return redirect("/password-incorrect")
+            password_incorrect = True
         else:
             login_user(user)
             return redirect("/")
 
-    return render_template("login.html")
+    return render_template("login.html", password_incorrect=password_incorrect, no_user=user_not_exist)
 
 
 @login_required
@@ -163,6 +174,8 @@ def homepage():
 
 @app.route('/upload', methods=["GET", "POST"])
 def upload_file():
+    global file_too_large
+    global invalid_extension
     if request.method == 'POST':
         try:
             # Access uploaded file
@@ -174,7 +187,7 @@ def upload_file():
             if file:
 
                 if extension not in app.config["ALLOWED_EXTENSIONS"]:
-                    return redirect("/file-extension-unsupported")
+                    invalid_extension = True
 
                 mimetype = file.mimetype
 
@@ -191,35 +204,15 @@ def upload_file():
                 return redirect("/")
             return redirect("/")
         except RequestEntityTooLarge:
-            return redirect("/file-is-too-large")
+            file_too_large = True
 
-    return render_template('upload.html')
-
-
-@app.route("/file-is-too-large")
-def file_size_too_large():
-    return render_template("file-is-too-large.html")
+    return render_template('upload.html', file_too_large=file_too_large, invalid_extension=invalid_extension)
 
 
 @app.route("/serve-image/<int:id>", methods=["GET"])
 def serve_image(id):
     img = Img.query.filter_by(id=id).first()
     return Response(img.img, mimetype=img.mimetype)
-
-
-@app.route("/file-extension-unsupported")
-def extension_unsupported():
-    return render_template("file-extension-unsupported.html")
-
-
-@app.route("/password-incorrect")
-def password_incorrect():
-    return render_template("password-incorrect.html")
-
-
-@app.route("/user-doesn't-exist")
-def no_user():
-    return render_template("no-user.html")
 
 
 if __name__ == "__main__":
