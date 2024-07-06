@@ -219,7 +219,7 @@ def download_image(id):
     image = Img.query.filter_by(id=id).first()
 
     return send_file(
-        io.BytesIO(image.image_data),
+        io.BytesIO(image.img),
         mimetype=image.content_type,
         as_attachment=True,
         attachment_filename=image.filename or f'image_{image_id}.jpg'
