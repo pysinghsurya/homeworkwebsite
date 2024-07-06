@@ -21,6 +21,8 @@ password_incorrect = False
 user_not_exist = False
 user_already_exist = False
 invalid_otp = False
+user_login = False
+user_registered = False
 app = Flask(__name__)
 my_email = "pythonersurya@gmail.com"
 my_password = "zpgp gdtv bdvg nkgi"
@@ -108,6 +110,8 @@ def hipage():
 @app.route("/create-account", methods=["POST", "GET"])
 def create_user():
     global invalid_otp
+    global user_registered
+
     if request.method == "POST":
 
         entered_otp = request.form["otp"]
@@ -124,8 +128,10 @@ def create_user():
 
             db.session.add(new_user)
             db.session.commit()
+            user_registered = True
 
             login_user(new_user)
+
 
             return redirect("/")
         if int(six_digit_string) != int(entered_otp):
@@ -138,6 +144,7 @@ def create_user():
 @app.route('/login', methods=["GET", "POST"])
 def login():
     global password_incorrect, user_not_exist
+    global user_login
     if request.method == "POST":
         password = request.form["password"]
         email = request.form["email"]
@@ -152,6 +159,7 @@ def login():
             password_incorrect = True
         else:
             login_user(user)
+            user_login = True
             return redirect("/")
 
     return render_template("login.html", password_incorrect=password_incorrect, no_user=user_not_exist)
@@ -171,7 +179,7 @@ def homepage():
     for image in images:
         unique_dates.append(image.date)
 
-    return render_template("index.html", current_year=year, images=images, date_options=unique_dates)
+    return render_template("index.html", current_year=year, images=images, date_options=unique_dates, user_login=user_login, user_registered=user_registered)
 
 
 @app.route('/upload', methods=["GET", "POST"])
