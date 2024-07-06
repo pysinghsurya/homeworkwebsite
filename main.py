@@ -1,5 +1,6 @@
 import os
 import random
+import io
 import smtplib
 from email.mime.text import MIMEText
 from flask import Flask, render_template, redirect, request, Response, send_file
