@@ -218,10 +218,11 @@ def serve_image(id):
 @app.route('/download/<int:id>')
 def download_image(id):
     image = Img.query.filter_by(id=id).first()
-    response = make_response(image.image_data)
-    response.headers['Content-Type'] = image.mimetype
-    response.headers['Content-Disposition'] = f'attachment; filename="{image.name}"'
-    return response 
+    return send_file(
+        io.BytesIO(image.image_data),
+        attachment_filename=image.filename,
+        as_attachment=True
+    )
 
 
 if __name__ == "__main__":
