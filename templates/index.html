@@ -94,9 +94,9 @@
                         
                             <h6 style="color:white;padding-top:5px;padding-bottom:5px;padding-left:20px;padding-right:20px">{{ image.date }}</h6>
 			    <h6 style="color:white;padding-top:5px;padding-bottom:5px;padding-left:20px;padding-right:20px">{{ image.subject }}</h6>
-                        
+                           <a href="{{ url_for('download_image', id=image.id) }}">
                             <img src="{{ url_for('serve_image', id=image.id) }}" alt="Uploaded Image" id="img1">
-                        
+			   </a>
                       </div>
                 </li>
 
