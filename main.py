@@ -181,7 +181,7 @@ def homepage():
     for image in images:
         unique_dates.append(image.date)
 
-    return render_template("index.html", current_year=year, images=images, date_options=unique_dates, user_login=user_login, user_registered=user_registered)
+    return render_template("index.html", current_year=year, images=images, date_options=unique_dates, user_login=user_login, user_registered=user_registered, file_uploaded=file_uploaded)
 
 
 @app.route('/upload', methods=["GET", "POST"])
