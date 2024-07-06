@@ -3,10 +3,10 @@ import random
 import io
 import smtplib
 from email.mime.text import MIMEText
-from flask import Flask, render_template, redirect, request, Response, send_file
+from flask import Flask, render_template, redirect, request, Response, make_response
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Integer, String
+from sqlalchemy import Integer, String, LargeBinary
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.exceptions import RequestEntityTooLarge
@@ -75,6 +75,7 @@ class Img(db.Model):
     mimetype = db.Column(db.Text, nullable=False)
     subject = db.Column(db.Text, nullable=False)
     date = db.Column(db.Text, nullable=False)
+    image_data = db.Column(LargeBinary)
 
 
 with app.app_context():
@@ -217,13 +218,10 @@ def serve_image(id):
 @app.route('/download/<int:id>')
 def download_image(id):
     image = Img.query.filter_by(id=id).first()
-
-    return send_file(
-        io.BytesIO(image.img),
-        mimetype=image.mimetype,
-        as_attachment=True,
-        filename=image.name
-    )
+    response = make_response(image.image_data)
+    response.headers['Content-Type'] = image.mimetype
+    response.headers['Content-Disposition'] = f'attachment; filename="{image.name}"'
+    return response 
 
 
 if __name__ == "__main__":
