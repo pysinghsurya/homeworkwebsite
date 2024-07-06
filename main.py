@@ -24,6 +24,7 @@ invalid_otp = False
 user_login = False
 user_registered = False
 no_file = False
+file_uploaded = False
 app = Flask(__name__)
 my_email = "pythonersurya@gmail.com"
 my_password = "zpgp gdtv bdvg nkgi"
@@ -188,6 +189,7 @@ def upload_file():
     global file_too_large
     global invalid_extension
     global no_file
+    global file_uploaded
     if request.method == 'POST':
         try:
             # Access uploaded file
@@ -213,6 +215,7 @@ def upload_file():
                 )
                 db.session.add(img)
                 db.session.commit()
+                file_uploaded = True
 
                 return redirect("/")
             else:
