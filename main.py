@@ -23,6 +23,7 @@ user_already_exist = False
 invalid_otp = False
 user_login = False
 user_registered = False
+no_file = False
 app = Flask(__name__)
 my_email = "pythonersurya@gmail.com"
 my_password = "zpgp gdtv bdvg nkgi"
@@ -186,6 +187,7 @@ def homepage():
 def upload_file():
     global file_too_large
     global invalid_extension
+    global no_file
     if request.method == 'POST':
         try:
             # Access uploaded file
@@ -213,11 +215,12 @@ def upload_file():
                 db.session.commit()
 
                 return redirect("/")
-            return redirect("/")
+            else:
+                no_file = True
         except RequestEntityTooLarge:
             file_too_large = True
 
-    return render_template('upload.html', file_too_large=file_too_large, invalid_extension=invalid_extension)
+    return render_template('upload.html', file_too_large=file_too_large, invalid_extension=invalid_extension, no_file=no_file)
 
 
 @app.route("/serve-image/<int:id>", methods=["GET"])
