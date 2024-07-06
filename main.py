@@ -222,7 +222,7 @@ def download_image(id):
         io.BytesIO(image.img),
         mimetype=image.mimetype,
         as_attachment=True,
-        attachment_filename=image.name
+        filename=image.name
     )
 
 
