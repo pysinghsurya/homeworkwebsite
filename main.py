@@ -198,7 +198,8 @@ def upload_file():
                     name=file.filename,
                     mimetype=mimetype,
                     subject=subject,
-                    date=date
+                    date=date,
+                    image_data=file.read()
                 )
                 db.session.add(img)
                 db.session.commit()
