@@ -2,7 +2,7 @@ import os
 import random
 import smtplib
 from email.mime.text import MIMEText
-from flask import Flask, render_template, redirect, request, Response
+from flask import Flask, render_template, redirect, request, Response, send_file
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Integer, String
@@ -213,6 +213,16 @@ def upload_file():
 def serve_image(id):
     img = Img.query.filter_by(id=id).first()
     return Response(img.img, mimetype=img.mimetype)
+@app.route('/download/<int:id>')
+def download_image(id):
+    image = Img.query.filter_by(id=id).first()
+
+    return send_file(
+        io.BytesIO(image.image_data),
+        mimetype=image.content_type,
+        as_attachment=True,
+        attachment_filename=image.filename or f'image_{image_id}.jpg'
+    )
 
 
 if __name__ == "__main__":
