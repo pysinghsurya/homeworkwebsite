@@ -220,7 +220,7 @@ def download_image(id):
     image = Img.query.filter_by(id=id).first()
     return send_file(
         io.BytesIO(image.image_data),
-        attachment_filename=image.filename,
+        attachment_filename=image.name,
         as_attachment=True
     )
 
