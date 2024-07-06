@@ -220,9 +220,9 @@ def download_image(id):
 
     return send_file(
         io.BytesIO(image.img),
-        mimetype=image.content_type,
+        mimetype=image.mimetype,
         as_attachment=True,
-        attachment_filename=image.filename or f'image_{image_id}.jpg'
+        attachment_filename=f'image_{id}.jpg'
     )
 
 
