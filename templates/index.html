@@ -27,6 +27,19 @@
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 }
+    #popup {
+      position: fixed;
+      top: 70px;
+      right: 10px;
+      padding: 20px;
+      background-color: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      z-index: 999; /* Ensure it's on top */
+      display: none; /* Initially hidden */
+      border-color:green
+    }
 
 
 </style>
@@ -83,6 +96,34 @@
 
 
 </div>
+{% if user_registered %}
+<div id="popup">Account Created Successfully.</div>
+<script>
+  const popup = document.getElementById('popup');
+
+  // Show the popup
+  popup.style.display = 'block';
+
+  // Hide the popup after 5 seconds (5000 milliseconds)
+  setTimeout(function() {
+    popup.style.display = 'none';
+  }, 5000);
+</script>
+{% endif %}
+{% if user_login %}
+<div id="popup">Login Successful.</div>
+<script>
+  const popup = document.getElementById('popup');
+
+  // Show the popup
+  popup.style.display = 'block';
+
+  // Hide the popup after 5 seconds (5000 milliseconds)
+  setTimeout(function() {
+    popup.style.display = 'none';
+  }, 5000);
+</script>
+{% endif %}
 
 
 <ul class="image-grid">  
