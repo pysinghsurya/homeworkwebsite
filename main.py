@@ -178,7 +178,6 @@ def logout():
 def homepage():
     images = Img.query.all()
     unique_dates = set(image.date for image in images)
-
     return render_template("index.html", current_year=year, images=images, date_options=unique_dates, user_login=user_login, user_registered=user_registered, file_uploaded=file_uploaded)
 
 
