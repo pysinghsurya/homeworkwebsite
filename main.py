@@ -106,7 +106,7 @@ def hipage():
             connection.login(my_email, my_password)
             connection.sendmail(my_email, email, message.as_string())
         return redirect("/create-account")
-    return render_template("register.html", current_user=current_user,user_exists=user_already_exist)
+    return render_template("register.html", current_user=current_user, user_exists=user_already_exist)
 
 
 @app.route("/create-account", methods=["POST", "GET"])
@@ -134,13 +134,12 @@ def create_user():
 
             login_user(new_user)
 
-
             return redirect("/")
         if int(six_digit_string) != int(entered_otp):
             invalid_otp = True
             return
 
-    return render_template("otp.html", current_user=current_user,invalid_otp=invalid_otp)
+    return render_template("otp.html", current_user=current_user, invalid_otp=invalid_otp)
 
 
 @app.route('/login', methods=["GET", "POST"])
@@ -178,7 +177,8 @@ def logout():
 def homepage():
     images = Img.query.all()
     unique_dates = set(image.date for image in images)
-    return render_template("index.html", current_year=year, images=images, date_options=unique_dates, user_login=user_login, user_registered=user_registered, file_uploaded=file_uploaded)
+    return render_template("index.html", current_year=year, images=images, date_options=unique_dates,
+                           user_login=user_login, user_registered=user_registered, file_uploaded=file_uploaded)
 
 
 @app.route('/upload', methods=["GET", "POST"])
@@ -220,13 +220,16 @@ def upload_file():
         except RequestEntityTooLarge:
             file_too_large = True
 
-    return render_template('upload.html', file_too_large=file_too_large, invalid_extension=invalid_extension, no_file=no_file)
+    return render_template('upload.html', file_too_large=file_too_large, invalid_extension=invalid_extension,
+                           no_file=no_file)
 
 
 @app.route("/serve-image/<int:id>", methods=["GET"])
 def serve_image(id):
     img = Img.query.filter_by(id=id).first()
     return Response(img.img, mimetype=img.mimetype)
+
+
 @app.route('/download/<int:id>')
 def download_image(id):
     image = Img.query.filter_by(id=id).first()
